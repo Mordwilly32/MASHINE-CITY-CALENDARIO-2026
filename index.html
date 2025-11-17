@@ -3,100 +3,81 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendario Editable</title>
+    <title>Calendario Completo</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            background: white;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 6px;
-            text-align: center;
-        }
-        .controls {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
-        }
-        #passwordSection {
-            margin-top: 20px;
-            text-align: center;
-        }
-        input[type="password"] {
-            padding: 6px;
-            width: 180px;
-        }
-        button {
-            padding: 6px 12px;
-            cursor: pointer;
-        }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 12px; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
+        .INTRACEDE { background:#00c853; }
+        .INTERCEDE { background:#fff200; }
+        .NACIONALES { background:#ff0000; color:white; }
+        .PREPARACION { background:#8bc34a; }
+        .REUNIONES { background:#0277bd; color:white; }
+        #passwordSection { margin-top:20px; text-align:center; }
+        button, input { padding:6px; }
     </style>
 </head>
 <body>
-
-<h1>Calendario Editable</h1>
-
+<h1>Calendario Editable Completo</h1>
 <table id="calendarTable">
-    <thead>
-        <tr>
-            <th>Mes</th>
-            <th>Día</th>
-            <th>Evento</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Enero</td>
-            <td>1</td>
-            <td contenteditable="false">—</td>
-        </tr>
-        <tr>
-            <td>Enero</td>
-            <td>2</td>
-            <td contenteditable="false">—</td>
-        </tr>
-    </tbody>
+<thead>
+<tr>
+<th>Día</th>
+<th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th>
+</tr>
+</thead>
+<tbody>
+<script>
+// Generate 1–31 rows
+for(let d=1; d<=31; d++){
+    document.write(`<tr><td>${d}</td>`);
+    for(let m=1; m<=12; m++){
+        document.write(`<td contenteditable="false" data-dia="${d}" data-mes="${m}">—</td>`);
+    }
+    document.write('</tr>');
+}
+</script>
+</tbody>
 </table>
 
 <div id="passwordSection">
-    <p>Ingresa la contraseña para activar la edición:</p>
+    <p>Ingresa la contraseña para activar edición:</p>
     <input type="password" id="passwordInput" placeholder="Contraseña" />
     <button onclick="checkPassword()">Entrar</button>
     <p id="passwordMessage" style="color:red;"></p>
 </div>
 
 <script>
-    const PASSWORD = "DreamTeam"; // CAMBIA ESTA CONTRASEÑA
+const PASSWORD = "1234";
 
-    function checkPassword() {
-        const input = document.getElementById("passwordInput").value;
-        const message = document.getElementById("passwordMessage");
-        if (input === PASSWORD) {
-            enableEditing();
-            message.textContent = "Edición activada";
-            message.style.color = "green";
-        } else {
-            message.textContent = "Contraseña incorrecta";
-        }
-    }
+function checkPassword(){
+    const inp = document.getElementById('passwordInput').value;
+    const msg = document.getElementById('passwordMessage');
+    if(inp === PASSWORD){ enableEditing(); msg.textContent = "Edición activada"; msg.style.color='green'; }
+    else msg.textContent = "Contraseña incorrecta";
+}
 
-    function enableEditing() {
-        const cells = document.querySelectorAll('#calendarTable td[contenteditable]');
-        cells.forEach(cell => cell.setAttribute('contenteditable', 'true'));
-    }
+function enableEditing(){
+    document.querySelectorAll('#calendarTable td[contenteditable]').forEach(td=>{
+        td.contentEditable = true;
+        td.onclick = ()=> applyCategory(td);
+    });
+}
+
+function applyCategory(cell){
+    const cat = prompt("Categoría:
+1 = INTRACEDE
+2 = INTERCEDE
+3 = NACIONALES
+4 = PREPARACION
+5 = REUNIONES");
+    cell.className = "";
+    if(cat==1) cell.classList.add('INTRACEDE');
+    if(cat==2) cell.classList.add('INTERCEDE');
+    if(cat==3) cell.classList.add('NACIONALES');
+    if(cat==4) cell.classList.add('PREPARACION');
+    if(cat==5) cell.classList.add('REUNIONES');
+}
 </script>
 
 </body>
