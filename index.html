@@ -3,32 +3,55 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calendario Completo</title>
+    <title>Calendario Editable</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 12px; }
-        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
-        .INTRACEDE { background:#00c853; }
+        body { font-family: Arial, sans-serif; background:#e9eef3; margin:0; padding:0; }
+        header { background:#1976d2; color:white; padding:15px; text-align:center; font-size:22px; }
+        .container { padding:15px; }
+        table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; }
+        th { background:#1565c0; color:white; padding:8px; position:sticky; top:0; font-size:12px; }
+        td { border:1px solid #ccc; padding:6px; font-size:12px; }
+
+        /* colores */
+        .INTRACEDE { background:#00c853; color:white; }
         .INTERCEDE { background:#fff200; }
-        .NACIONALES { background:#ff0000; color:white; }
-        .PREPARACION { background:#8bc34a; }
+        .NACIONALES { background:#ff1744; color:white; }
+        .PREPARACION { background:#9ccc65; }
         .REUNIONES { background:#0277bd; color:white; }
+
+        /* móvil */
+        @media(max-width:700px){
+            table { font-size:10px; }
+            th, td { padding:4px; }
+            header { font-size:18px; }
+        }
+
         #passwordSection { margin-top:20px; text-align:center; }
-        button, input { padding:6px; }
+        input, button { padding:8px; margin:5px; border-radius:6px; border:1px solid #aaa; }
+        button { background:#1976d2; color:white; border:none; cursor:pointer; }
+
+        /* menú de categorías */
+        #categoryMenu {
+            position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+            background:white; padding:15px; border-radius:10px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.2);
+            display:none; z-index:999;
+        }
+        #categoryMenu button { display:block; width:100%; margin:6px 0; }
     </style>
 </head>
 <body>
-<h1>Calendario Editable Completo</h1>
+<header>Calendario Editable</header>
+<div class="container">
 <table id="calendarTable">
 <thead>
 <tr>
 <th>Día</th>
-<th>Enero</th><th>Febrero</th><th>Marzo</th><th>Abril</th><th>Mayo</th><th>Junio</th><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Octubre</th><th>Noviembre</th><th>Diciembre</th>
+<th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th>
 </tr>
 </thead>
 <tbody>
 <script>
-// Generate 1–31 rows
 for(let d=1; d<=31; d++){
     document.write(`<tr><td>${d}</td>`);
     for(let m=1; m<=12; m++){
@@ -41,14 +64,26 @@ for(let d=1; d<=31; d++){
 </table>
 
 <div id="passwordSection">
-    <p>Ingresa la contraseña para activar edición:</p>
-    <input type="password" id="passwordInput" placeholder="Contraseña" />
+    <p>Contraseña para editar:</p>
+    <input type="password" id="passwordInput" placeholder="Contraseña">
     <button onclick="checkPassword()">Entrar</button>
     <p id="passwordMessage" style="color:red;"></p>
+</div>
+</div>
+
+<!-- menú categorías -->
+<div id="categoryMenu">
+    <button onclick="applyToCell('INTRACEDE')">Intracecede</button>
+    <button onclick="applyToCell('INTERCEDE')">Intercede</button>
+    <button onclick="applyToCell('NACIONALES')">Nacionales</button>
+    <button onclick="applyToCell('PREPARACION')">Preparación</button>
+    <button onclick="applyToCell('REUNIONES')">Reuniones</button>
+    <button style="background:#ccc; color:black;" onclick="closeMenu()">Cancelar</button>
 </div>
 
 <script>
 const PASSWORD = "1234";
+let activeCell = null;
 
 function checkPassword(){
     const inp = document.getElementById('passwordInput').value;
@@ -60,23 +95,20 @@ function checkPassword(){
 function enableEditing(){
     document.querySelectorAll('#calendarTable td[contenteditable]').forEach(td=>{
         td.contentEditable = true;
-        td.onclick = ()=> applyCategory(td);
+        td.onclick = ()=> openMenu(td);
     });
 }
 
-function applyCategory(cell){
-    const cat = prompt("Categoría:
-1 = INTRACEDE
-2 = INTERCEDE
-3 = NACIONALES
-4 = PREPARACION
-5 = REUNIONES");
-    cell.className = "";
-    if(cat==1) cell.classList.add('INTRACEDE');
-    if(cat==2) cell.classList.add('INTERCEDE');
-    if(cat==3) cell.classList.add('NACIONALES');
-    if(cat==4) cell.classList.add('PREPARACION');
-    if(cat==5) cell.classList.add('REUNIONES');
+function openMenu(cell){
+    activeCell = cell;
+    document.getElementById('categoryMenu').style.display = 'block';
+}
+function closeMenu(){ document.getElementById('categoryMenu').style.display='none'; }
+
+function applyToCell(category){
+    if(!activeCell) return;
+    activeCell.className = category;
+    closeMenu();
 }
 </script>
 
